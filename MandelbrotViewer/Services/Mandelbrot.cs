@@ -42,6 +42,9 @@ namespace MandelbrotViewer.Service
                 steps++;
             }
 
+            if (steps == MAX_STEPS)
+                steps = -1;
+
             return steps;
         }
 

@@ -1,10 +1,7 @@
 ﻿using MandelbrotViewer.Service;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace MandelbrotViewer.Services
 {
@@ -47,37 +44,41 @@ namespace MandelbrotViewer.Services
         {
             var color = new Pixel();
 
+            if (steps == - 1)
+                steps = 0;
 
-            if (steps < 42)
+            if (steps < 85)
             {
-                color.red = 255;
-                color.green = 129;
-                color.blue = 99;
-            }
-            else if (steps < 85)
-            {
-                color.red = 234;
-                color.green = 182;
-                color.blue = 214;
-            }
-            else if (steps < 128)
-            {
-                color.red = 181;
-                color.green = 112;
+                color.red = 0;
+
+                double greenGradient = 200.0f / 85.0f;
+                color.green = (byte)(steps * greenGradient);
+
                 color.blue = 255;
             }
-            else if (steps < 173)
+
+            else if (steps < 170)
             {
-                color.red = 90;
-                color.green = 121;
-                color.blue = 232;
+                double redGradient = 255.0f / 85.0f;
+                color.red = (byte)((steps - 85) * redGradient);
+
+                color.green = 200;
+
+                double blueGradient = -255.0f / 85.0f;
+                color.blue = (byte)(255 + ((steps - 85) * blueGradient));
+
             }
+
             else
             {
-                color.red = 169;
-                color.green = 247;
-                color.blue = 255;
+                color.red = 255;
+
+                double greenGradient = -200.0f / 85.0f;
+                color.green = (byte)(200 + ((steps - 170) * greenGradient));
+
+                color.blue = 0;
             }
+
             return color;
         }
 
