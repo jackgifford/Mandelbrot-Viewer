@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MandelbrotViewer.Services;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -11,25 +12,14 @@ namespace MandelbrotViewer.Service
         private int MAX_STEPS = 255;
         private int TILE_SIZE = 512;
 
-        public Bitmap DrawMandelbrot(Complex center, int z)
+        private readonly SetBitmap _setBmp;
+
+        public Mandelbrot()
         {
-            var bmp = new Bitmap(TILE_SIZE, TILE_SIZE);
-
-            var grid = EscapeGrid(center, z);
-
-            for (var y = 0; y < TILE_SIZE; y++)
-            {
-                for (var x = 0; x < TILE_SIZE; x++)
-                {
-                    var pixel = GetColour(grid[y][x]);
-                    var colour = Color.FromArgb(pixel.red, pixel.green, pixel.blue);
-                    bmp.SetPixel(x, y, colour);
-
-                }
-            }
-
-            return bmp;
+            _setBmp = new SetBitmap();
         }
+
+        public Bitmap DrawMandelbrot(Complex center, int z) => _setBmp.ManipulateBitmap(EscapeGrid(center, z));
 
 
         private int EscapeSteps(Complex c)
@@ -61,10 +51,10 @@ namespace MandelbrotViewer.Service
         {
             var grid = new int[TILE_SIZE][];
 
-
             for (var y = 0; y < 512; y++)
             {
                 grid[y] = new int[TILE_SIZE];
+
                 for (var x = 0; x < 512; x++)
                 {
                     var c = GenerateComplexSeed(z, x, y, center);
@@ -120,52 +110,13 @@ namespace MandelbrotViewer.Service
         }
 
 
-        //Pretty sure this works but the bitmap isn't high resolution to verify...
-        //Returns a greyscale colour based on the iteration count
-        private Pixel GetColour(int steps)
-        {
-            var color = new Pixel();
-
-
-            if (steps < 42)
-            {
-                color.red = 255;
-                color.green = 129;
-                color.blue = 99;
-            }
-            else if (steps < 85)
-            {
-                color.red = 234;
-                color.green = 182;
-                color.blue = 214;
-            }
-            else if (steps < 128)
-            {
-                color.red = 181;
-                color.green = 112;
-                color.blue = 255;
-            }
-            else if (steps < 173)
-            {
-                color.red = 90;
-                color.green = 121;
-                color.blue = 232;
-            }
-            else
-            {
-                color.red = 169;
-                color.green = 247;
-                color.blue = 255;
-            }
-            return color;
-        }
     }
 
     public class Pixel
     {
-        public int red { get; set; }
-        public int green { get; set; }
-        public int blue { get; set; }
+        public byte red { get; set; }
+        public byte green { get; set; }
+        public byte blue { get; set; }
     }
 
 
