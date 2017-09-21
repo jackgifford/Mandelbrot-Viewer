@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MandelbrotViewer.Service;
@@ -18,7 +15,7 @@ namespace MandelbrotViewer.Controllers
             _mandelbrot = new Mandelbrot();
         }
 
-        public IActionResult Index(int z, double x, double y)
+        public async Task<IActionResult> Index(int z, double x, double y)
         {
             var center = new Complex
             {
@@ -28,7 +25,12 @@ namespace MandelbrotViewer.Controllers
 
             var ms = new MemoryStream();
 
-            var bmp = _mandelbrot.DrawMandelbrot(center, z);
+            var task = Task.Run(() => _mandelbrot.DrawMandelbrot(center, z));
+
+            await Task.WhenAll(task);
+
+            var bmp = task.Result;
+
             bmp.Save(ms, ImageFormat.Png);
             ms.Position = 0;
             return new FileStreamResult(ms, "image/png");
